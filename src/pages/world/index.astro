@@ -1,0 +1,31 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+const entries = [
+  ["龙楼", "古氏皇权的核心象征，传说真龙被锁在此处。太学悬于龙楼二层，诸侯子弟在皇权阴影下读书。"],
+  ["火山封地", "嬴、启二族故地，信仰凤凰。火山爆发与皇权清洗让两族几乎灭绝。"],
+  ["太学制度", "古胤立储后设立，将诸侯宗子集中入京读书，表面是教化，实则也是质子制度。"],
+  ["凤凰与预言", "火山、凤凰纹、梦境预言和虫谷壁画共同指向更久远的灾变循环。"],
+  ["食胎蛾", "从南乔虫谷延伸到宫廷产房的毒物线，牵动白贤妃之死与白德妃安胎。"],
+];
+---
+
+<BaseLayout title="设定">
+  <section class="section compact">
+    <div class="inner">
+      <p class="eyebrow">Worldbuilding</p>
+      <h1 class="section-title">世界观设定</h1>
+      <p class="section-lead">
+        
+      </p>
+      <div class="grid" style="margin-top: 2rem;">
+        {entries.map(([title, text]) => (
+          <article class="card">
+            <h2>{title}</h2>
+            <p>{text}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+</BaseLayout>

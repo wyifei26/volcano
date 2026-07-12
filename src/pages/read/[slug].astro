@@ -1,0 +1,156 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import chaptersData from "../../data/generated/chapters.json";
+import { withBase } from "../../utils/paths";
+
+export function getStaticPaths() {
+  return chaptersData.chapters.map((chapter) => ({
+    params: { slug: chapter.slug },
+    props: { chapter }
+  }));
+}
+
+const { chapter } = Astro.props;
+const previous = chaptersData.chapters.find((item) => item.slug === chapter.previousSlug);
+const next = chaptersData.chapters.find((item) => item.slug === chapter.nextSlug);
+const currentIndex = chaptersData.chapters.findIndex((item) => item.slug === chapter.slug);
+const serialUpdatedLabel = chaptersData.serialUpdatedLabel ?? "待更新";
+const volumes = new Map();
+const fontOptions = [
+  { value: "16", label: "更小" },
+  { value: "18", label: "小" },
+  { value: "20", label: "默认" },
+  { value: "22", label: "大" },
+  { value: "24", label: "特大" }
+];
+const lineHeightOptions = [
+  { value: "1.85", label: "紧" },
+  { value: "2.1", label: "适中" },
+  { value: "2.35", label: "松" }
+];
+for (const item of chaptersData.chapters) {
+  if (!volumes.has(item.volume)) volumes.set(item.volume, []);
+  volumes.get(item.volume).push(item);
+}
+---
+
+<BaseLayout title={chapter.title} pageClass="reader-shell">
+  <div class="reader-layout" data-reader>
+    <button
+      class="reader-sidebar-toggle"
+      type="button"
+      data-reader-sidebar-toggle
+      aria-controls="reader-sidebar"
+      aria-expanded="true"
+    ></button>
+
+    <aside class="reader-sidebar" id="reader-sidebar" aria-label="章节目录">
+      <div class="reader-sidebar-head">
+        <div class="reader-controls" aria-label="阅读设置">
+          <fieldset class="reader-control-group">
+            <legend>字号</legend>
+            <div class="reader-segmented">
+              {fontOptions.map((option) => (
+                <label>
+                  <input type="radio" name="reader-font-desktop" value={option.value} data-reader-font checked={option.value === "20"} />
+                  <span>{option.label}</span>
+                </label>
+              ))}
+            </div>
+          </fieldset>
+          <fieldset class="reader-control-group">
+            <legend>行距</legend>
+            <div class="reader-segmented compact">
+              {lineHeightOptions.map((option) => (
+                <label>
+                  <input type="radio" name="reader-line-height-desktop" value={option.value} data-reader-line-height checked={option.value === "2.1"} />
+                  <span>{option.label}</span>
+                </label>
+              ))}
+            </div>
+          </fieldset>
+        </div>
+      </div>
+      <nav class="reader-toc">
+        {[...volumes.entries()].map(([volume, chapters]) => (
+          <section>
+            <h2>{volume}</h2>
+            {chapters.map((item) => (
+              <a
+                class:list={["reader-toc-link", { active: item.slug === chapter.slug }]}
+                href={withBase(`/read/${item.slug}/`)}
+                aria-current={item.slug === chapter.slug ? "page" : undefined}
+              >
+                <span>{item.title}</span>
+                <small>{item.wordCount.toLocaleString("zh-CN")} 字</small>
+              </a>
+            ))}
+          </section>
+        ))}
+      </nav>
+    </aside>
+
+    <article class="reader">
+      <details class="reader-mobile-toc">
+        <summary>章节目录</summary>
+        <div class="reader-controls mobile" aria-label="阅读设置">
+          <fieldset class="reader-control-group">
+            <legend>字号</legend>
+            <div class="reader-segmented">
+              {fontOptions.map((option) => (
+                <label>
+                  <input type="radio" name="reader-font-mobile" value={option.value} data-reader-font checked={option.value === "20"} />
+                  <span>{option.label}</span>
+                </label>
+              ))}
+            </div>
+          </fieldset>
+          <fieldset class="reader-control-group">
+            <legend>行距</legend>
+            <div class="reader-segmented compact">
+              {lineHeightOptions.map((option) => (
+                <label>
+                  <input type="radio" name="reader-line-height-mobile" value={option.value} data-reader-line-height checked={option.value === "2.1"} />
+                  <span>{option.label}</span>
+                </label>
+              ))}
+            </div>
+          </fieldset>
+        </div>
+        <nav class="reader-toc">
+          {[...volumes.entries()].map(([volume, chapters]) => (
+            <section>
+              <h2>{volume}</h2>
+              {chapters.map((item) => (
+                <a
+                  class:list={["reader-toc-link", { active: item.slug === chapter.slug }]}
+                  href={withBase(`/read/${item.slug}/`)}
+                  aria-current={item.slug === chapter.slug ? "page" : undefined}
+                >
+                  <span>{item.title}</span>
+                  <small>{item.wordCount.toLocaleString("zh-CN")} 字</small>
+                </a>
+              ))}
+            </section>
+          ))}
+        </nav>
+      </details>
+
+      <header class="reader-head">
+        <p class="volume">{chapter.volume}</p>
+        <h1>{chapter.title}</h1>
+      </header>
+
+      <div class="novel-text" data-reader-content>
+        {chapter.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
+      </div>
+
+      <nav class="reader-nav" aria-label="章节导航">
+        {previous ? <a class="button" href={withBase(`/read/${previous.slug}/`)}>上一章：{previous.title}</a> : <span></span>}
+        <a class="button" href={withBase("/read/")}>目录</a>
+        {next ? <a class="button primary" href={withBase(`/read/${next.slug}/`)}>下一章：{next.title}</a> : <span></span>}
+      </nav>
+    </article>
+  </div>
+  <script src={withBase("/reader-settings.js")} defer></script>
+</BaseLayout>

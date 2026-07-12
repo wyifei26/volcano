@@ -1,0 +1,24 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { locations } from "../../data/site";
+---
+
+<BaseLayout title="地图">
+  <section class="section compact">
+    <div class="inner">
+      <p class="eyebrow">Map</p>
+      <h1 class="section-title">古朝舆图</h1>
+      <p class="section-lead">
+        先以可替换的前端占位地图呈现龙楼、火山封地与四方封地的位置关系。
+      </p>
+      <div class="map-board" style="margin-top: 2rem;">
+        {locations.map((place) => (
+          <div class="map-pin" style={`--x: ${place.x}; --y: ${place.y}`}>
+            <strong>{place.name}</strong>
+            <span>{place.desc}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+</BaseLayout>

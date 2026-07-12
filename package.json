@@ -1,0 +1,16 @@
+{
+  "name": "huoshanjie-site",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "import": "node scripts/import-novel.mjs",
+    "dev": "npm run import && astro dev",
+    "build": "npm run import && astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "astro": "^7.0.3",
+    "typescript": "^6.0.3"
+  }
+}

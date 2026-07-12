@@ -1,0 +1,55 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { characters, factions } from "../../data/site";
+---
+
+<BaseLayout title="人物">
+  <section class="section compact">
+    <div class="inner">
+      <p class="eyebrow">Characters</p>
+      <h1 class="section-title">人物与阵营</h1>
+      <p class="section-lead">
+        立绘位置先以占位图呈现，后续可替换为正式人物图，并扩展为人物详情页与关系图。
+      </p>
+    </div>
+  </section>
+
+  <section class="section compact" style="padding-top: 0;">
+    <div class="inner">
+      <div class="grid">
+        {characters.map((person) => (
+          <article class="card character-card">
+            <div class="placeholder-portrait" style={`--portrait-color: ${person.color}`}></div>
+            <div>
+              <p class="eyebrow">{person.group}</p>
+              <h2>{person.name}</h2>
+              <p>{person.role}</p>
+              <p>{person.summary}</p>
+              <ul class="tag-list">
+                {person.tags.map((tag) => <li>{tag}</li>)}
+              </ul>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="inner">
+      <p class="eyebrow">Factions</p>
+      <h2 class="section-title">势力分组</h2>
+      <div class="grid" style="margin-top: 2rem;">
+        {factions.map((faction) => (
+          <article class="card">
+            <h3>{faction.name}</h3>
+            <p>{faction.tone}</p>
+            <ul class="tag-list">
+              {faction.people.map((person) => <li>{person}</li>)}
+            </ul>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+</BaseLayout>

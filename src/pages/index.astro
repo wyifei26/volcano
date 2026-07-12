@@ -1,0 +1,53 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import posterImage from "../assets/poster.png";
+import chaptersData from "../data/generated/chapters.json";
+import { site } from "../data/site";
+import { withBase } from "../utils/paths";
+
+const latest = chaptersData.chapters.at(-1);
+const totalWords = chaptersData.totalWordCount.toLocaleString("zh-CN");
+const serialUpdatedLabel = chaptersData.serialUpdatedLabel ?? "待更新";
+---
+
+<BaseLayout title={site.title} description={site.description} pageClass="home-page" bodyStyle={`--home-poster: url(${posterImage.src});`}>
+  <section class="hero">
+    <div class="hero-content">
+      <h1>火山劫</h1>
+      <p class="lead">
+        古朝末世，凤凰自灰烬中醒来。
+      </p>
+      <div class="hero-meta">
+        <span>{chaptersData.chapterCount} 章</span>
+        <span>{totalWords} 字</span>
+        <span>连载更新：{serialUpdatedLabel}</span>
+        <span>最新：{latest?.title}</span>
+      </div>
+      <div class="button-row">
+        <a class="button primary" href={withBase(latest ? `/read/${latest.slug}/` : "/read/")}>阅读最新章节</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section compact">
+    <div class="inner">
+      <p class="eyebrow">Current Chapter</p>
+      <h2 class="section-title">连载进度</h2>
+      <p class="section-lead">
+        连载更新至 {serialUpdatedLabel}。
+      </p>
+      <div class="chapter-list" style="margin-top: 2rem;">
+        {chaptersData.chapters.slice(-5).reverse().map((chapter) => (
+          <a class="chapter-row" href={withBase(`/read/${chapter.slug}/`)}>
+            <span>
+              <h2>{chapter.title}</h2>
+              <p>{chapter.excerpt}</p>
+            </span>
+            <small>{chapter.wordCount.toLocaleString("zh-CN")} 字</small>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+</BaseLayout>

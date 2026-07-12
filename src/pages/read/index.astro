@@ -1,0 +1,45 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import chaptersData from "../../data/generated/chapters.json";
+import { withBase } from "../../utils/paths";
+
+const volumes = new Map();
+for (const chapter of chaptersData.chapters) {
+  if (!volumes.has(chapter.volume)) volumes.set(chapter.volume, []);
+  volumes.get(chapter.volume).push(chapter);
+}
+const serialUpdatedLabel = chaptersData.serialUpdatedLabel ?? "待更新";
+---
+
+<BaseLayout title="阅读">
+  <section class="section compact">
+    <div class="inner">
+      <p class="eyebrow">Read</p>
+      <h1 class="section-title">正文阅读</h1>
+      <p class="section-lead">
+        连载更新：{serialUpdatedLabel} · {chaptersData.chapterCount} 章 · {chaptersData.totalWordCount.toLocaleString("zh-CN")} 字
+      </p>
+    </div>
+  </section>
+
+  <section class="section compact" style="padding-top: 0;">
+    <div class="inner">
+      {[...volumes.entries()].map(([volume, chapters]) => (
+        <section style="margin-bottom: 2.5rem;">
+          <p class="eyebrow">{volume}</p>
+          <div class="chapter-list">
+            {chapters.map((chapter) => (
+              <a class="chapter-row" href={withBase(`/read/${chapter.slug}/`)}>
+                <span>
+                  <h2>{chapter.title}</h2>
+                  <p>{chapter.excerpt}</p>
+                </span>
+                <small>{chapter.wordCount.toLocaleString("zh-CN")} 字</small>
+              </a>
+            ))}
+          </div>
+        </section>
+      ))}
+    </div>
+  </section>
+</BaseLayout>

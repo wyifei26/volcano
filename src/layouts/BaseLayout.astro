@@ -1,0 +1,48 @@
+---
+import "../styles/global.css";
+import { site } from "../data/site";
+import { withBase } from "../utils/paths";
+
+interface Props {
+  title?: string;
+  description?: string;
+  pageClass?: string;
+  bodyStyle?: string;
+}
+
+const {
+  title = site.title,
+  description = site.description,
+  pageClass = "",
+  bodyStyle = ""
+} = Astro.props;
+
+const pageTitle = title === site.title ? site.title : `${title} · ${site.title}`;
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <title>{pageTitle}</title>
+  </head>
+  <body class={pageClass} style={bodyStyle}>
+    <header class="site-header">
+      <a class="brand" href={withBase("/")}>
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span>
+          <strong>{site.title}</strong>
+          <small>{site.subtitle}</small>
+        </span>
+      </a>
+      <nav class="site-nav" aria-label="主导航">
+        {site.nav.map((item) => <a href={withBase(item.href)}>{item.label}</a>)}
+      </nav>
+    </header>
+    <main>
+      <slot />
+    </main>
+  </body>
+</html>
